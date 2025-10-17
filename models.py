@@ -2,7 +2,6 @@ import os
 import streamlit as st
 from openai import OpenAI
 import google.generativeai as genai
-import anthropic
 
 from dotenv import load_dotenv
 load_dotenv() # Aún lo mantenemos por si lo usas para otras claves
@@ -13,11 +12,6 @@ load_dotenv() # Aún lo mantenemos por si lo usas para otras claves
 # Muestra un error en la app si las claves no están configuradas.
 
 # OpenAI (para DeepSeek y GPT)
-try:
-    deepseek_client = OpenAI(api_key=os.environ.get('DEEPSEEK_API_KEY'), base_url="https://api.deepseek.com")
-except Exception:
-    st.error("Clave de API de DeepSeek no encontrada. Por favor, configúrala.")
-    deepseek_client = None
 
 try:
     openAI_client = OpenAI(api_key=os.environ.get('OPENAI_API_KEY'))
@@ -44,33 +38,7 @@ except Exception as e:
     st.error(f"Ocurrió un error al inicializar Gemini: {e}")
     gemini_model = None
 
-# Anthropic
-try:
-    claude_client = anthropic.Anthropic(api_key=os.environ.get('ANTHROPIC_API_KEY'))
-except Exception:
-    st.error("Clave de API de Claude no encontrada. Por favor, configúrala.")
-    claude_client = None
-
-
 # --- Funciones Específicas del Modelo ---
-
-def get_deepseek_answer(prompt_context, history, current_speaker):
-    """Llama a la API de DeepSeek con el historial formateado."""
-    if not deepseek_client:
-        return "El cliente de DeepSeek no está inicializado. Verifica tu clave de API."
-    
-    messages = [{"role": "system", "content": prompt_context}]
-    for msg in history:
-        role = "assistant" if msg['author'] == current_speaker else "user"
-        messages.append({"role": role, "content": msg['content']})
-        
-    response = deepseek_client.chat.completions.create(
-        model="deepseek-chat",
-        messages=messages,
-        stream=False
-    )
-    return response.choices[0].message.content
-
 def get_gemini_answer(prompt_context, history, current_speaker):
     """Llama a la API de Gemini con el historial formateado."""
     if not gemini_model:
@@ -92,29 +60,6 @@ def get_gemini_answer(prompt_context, history, current_speaker):
     except Exception as e:
         return f"Error al llamar a Gemini: {str(e)}"
 
-
-def get_claude_answer(prompt_context, history, current_speaker):
-    """Llama a la API de Claude con el historial formateado."""
-    if not claude_client:
-        return "El cliente de Claude no está inicializado. Verifica tu clave de API."
-        
-    messages = [{"role": "system", "content": prompt_context}]
-    for msg in history:
-        role = "assistant" if msg['author'] == current_speaker else "user"
-        messages.append({"role": role, "content": msg['content']})
-    
-    # El prompt para Claude debe tener un mensaje de sistema separado si es posible
-    system_prompt = prompt_context
-    conversation = messages[1:] # Excluir el mensaje de sistema original
-    
-    response = claude_client.messages.create(
-        model="claude-3-sonnet-20240229", # Usar un modelo conocido y estable
-        max_tokens=1024,
-        system=system_prompt,
-        messages=conversation
-    )
-    return response.content[0].text
-
 def get_gpt_answer(prompt_context, history, current_speaker):
     """Llama a la API de OpenAI con el historial formateado."""
     if not openAI_client:
@@ -133,9 +78,7 @@ def get_gpt_answer(prompt_context, history, current_speaker):
 
 # --- Despachador Principal ---
 MODEL_DISPATCHER = {
-    "DeepSeek Chat": get_deepseek_answer,
     "Gemini 1.5 Flash": get_gemini_answer,
-    "Claude": get_claude_answer,
     "GPT-4o-mini": get_gpt_answer,
 }
 
