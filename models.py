@@ -2,8 +2,6 @@ import os
 import streamlit as st
 from openai import OpenAI
 import google.generativeai as genai
-from dotenv import load_dotenv
-load_dotenv() # Aún lo mantenemos por si lo usas para otras claves
 
 # --- Inicialización de Clientes ---
 
@@ -13,7 +11,7 @@ load_dotenv() # Aún lo mantenemos por si lo usas para otras claves
 # OpenAI (para DeepSeek y GPT)
 
 try:
-    openAI_client = OpenAI(api_key=os.environ.get('OPENAI_API_KEY'))
+    openAI_client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 except Exception:
     st.error("Clave de API de OpenAI no encontrada. Por favor, configúrala.")
     openAI_client = None
