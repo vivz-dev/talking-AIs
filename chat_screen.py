@@ -41,10 +41,10 @@ def show_chat():
         # Define el contexto (prompt de sistema) para el modelo
         if not st.session_state.conversation:
             # Mensaje de sistema para el primer turno
-            prompt_context = f"Eres {current_speaker}. Inicia una conversación con {other_speaker}. El tema es: '{topic if topic else 'cualquier cosa que desees'}'. Tu respuesta debe ser solo tu primer mensaje, sin preámbulos."
+            prompt_context = f"El tema de esta conversación es: '{topic if topic else 'cualquier cosa que desees'}'. Tu respuesta debe ser solo tu primer mensaje, sin preámbulos."
         else:
             # Mensaje de sistema para continuar la conversación
-            prompt_context = f"Eres {current_speaker}. Estás en una conversación con {other_speaker} sobre '{topic if topic else 'un tema libre'}'. El historial de la conversación se proporciona a continuación. Continúa la conversación de forma natural. Tu respuesta debe ser solo tu mensaje, sin preámbulos."
+            prompt_context = f"El tema de esta conversación es:  '{topic if topic else 'un tema libre'}'. El historial de la conversación se proporciona a continuación. Continúa la conversación de forma natural. Tu respuesta debe ser solo tu mensaje, sin preámbulos."
 
         # Genera y muestra la respuesta del modelo
         with st.spinner(f"Esperando a {current_speaker}..."):
