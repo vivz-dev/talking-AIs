@@ -2,7 +2,6 @@ import os
 import streamlit as st
 from openai import OpenAI
 import google.generativeai as genai
-
 from dotenv import load_dotenv
 load_dotenv() # Aún lo mantenemos por si lo usas para otras claves
 
