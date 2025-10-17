@@ -3,12 +3,9 @@ import streamlit as st
 from openai import OpenAI
 import google.generativeai as genai
 
-# --- Inicialización de Clientes ---
-
-# Intenta inicializar los clientes de las APIs.
-# Muestra un error en la app si las claves no están configuradas.
-
-# OpenAI (para DeepSeek y GPT)
+if not st.runtime.exists():
+    from dotenv import load_dotenv
+    load_dotenv()
 
 try:
     openAI_client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
