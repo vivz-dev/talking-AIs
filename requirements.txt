@@ -2,3 +2,4 @@ streamlit
 openai
 google-genai
 dotenv
+google-generativeai
